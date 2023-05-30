@@ -1,0 +1,15 @@
+node {   
+    stage('Clone repository') {
+        git credentialsId: 'github_for_nails', url: 'git@github.com:spa086/nails4you.git'
+    }
+    
+    stage('Build image') {
+       dockerImage = docker.build("spaskyson/nails_django:${BUILD_NUMBER}")
+    }
+    
+ stage('Push image') {
+        withDockerRegistry([ credentialsId: "dockerhub", url: "" ]) {
+        dockerImage.push()
+        }
+    }    
+}
