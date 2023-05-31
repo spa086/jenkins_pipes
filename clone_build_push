@@ -12,12 +12,18 @@ node {
         dockerImage.push()
         }
     }
-stage('Deploy') { sshagent(credentials: ['nails4you_ssh']) {
-    sh ''' 
-     ssh spa@192.168.1.55  docker stop nails4you
-     ssh spa@192.168.1.55  docker rm nails4you
-     ssh spa@192.168.1.55  docker run --name nails4you -d -p 8000:8000 spaskyson/nails_django:latest'
-     ''' 
+    def remote = [:]
+    remote.name = "node-1"
+    remote.host = "192.168.1.55"
+    remote.allowAnyHosts = true
+    withCredentials([sshUserPrivateKey(credentialsId: 'nailsPem', keyFileVariable: 'identity', usernameVariable: 'userName')]) {
+        remote.user = userName
+        remote.identityFile = identity
+  stage('Deploy'){
+        sshCommand remote: remote, command: 'docker stop nails4you'
+        sshCommand remote: remote, command: 'docker run --name nails4you --rm -d -p  8000:8000 spaskyson/nails_django:latest'
+
+   
 }
-}
+} 
 }
