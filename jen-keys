@@ -1,0 +1,6 @@
+#На основной машине, где установлен дженкинс:
+
+sudo -i #Переход под root пользователя
+su - jenkins #Вход под пользователем jenkins
+ssh-keygen 
+ssh-copy-id user@host
